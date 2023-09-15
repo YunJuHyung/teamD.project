@@ -1,0 +1,122 @@
+/* 커뮤니티 페이지 스타일 */
+section.notice {
+  background-color: #f9f9f9;
+  padding: 30px 400px;
+}
+
+
+/* 페이지 타이틀 스타일 */
+.page-title h2 {
+  font-size: 36px;
+  text-align: center;
+  margin-top: 30px;
+  color: #333;
+}
+
+.page-title h3 {
+  font-size: 24px;
+  text-align: center;
+  margin-top: 20px;
+  color: #333;
+}
+
+/* 검색 결과 스타일 */
+.page-title p {
+  font-size: 18px;
+  text-align: center;
+  margin-top: 10px;
+  color: #666;
+}
+
+/* 검색 폼 스타일 */
+.search {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.SelectSerch {
+  width: 150px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.keyword {
+  width: 70%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.btn- {
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 3px 20px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.btn-:hover {
+  background-color: #555;
+}
+
+/* 게시판 목록 스타일 */
+.board-table {
+  margin-top: 30px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.board-table th {
+  padding: 15px;
+  text-align: center;
+}
+
+.board-table td {
+  padding: 15px;
+  text-align: center;
+}
+
+.board-table a {
+  color: #333;
+}
+
+.board-table a:hover {
+  text-decoration: underline;
+}
+
+/* 페이지 버튼 스타일 */
+.pagenum {
+    border: 1px solid#5fc6b7;
+    color: #5fc6b7;
+    padding: 3px 5px;
+    text-decoration: none;  /*  밑줄제거  */
+    cursor: pointer;
+    display: inline-block;
+	text-align:center;
+	font-size: 9pt;
+	border-radius: 2px;
+}
+.pagenum:hover{
+	  background-color:#5fc6b7;
+	  color:white;
+	  font-weight: bold;
+} 
+
+.current {
+	background-color:gray;
+	color:white;
+}
+
+
+/* 댓글 수 아이콘 스타일 */
+.board-table .th-commentCount::before {
+  content: "\f086";
+  font-family: FontAwesome;
+  font-size: 18px;
+  color: #333;
+  margin-right: 5px;
+}

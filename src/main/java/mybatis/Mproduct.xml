@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Mproduct">
+	
+	<select parameterType="java.util.Map" resultType="teamD.project.dto.MproductDto" id="pagelist">
+	SELECT * FROM(SELECT rownum r ,f.*FROM (SELECT * FROM Mproduct where status = 0 ORDER BY pcode DESC) f)
+	WHERE r BETWEEN #{start} AND #{end} 
+	</select>
+	
+	<select id="searchlist" resultType="teamD.project.dto.MproductDto" parameterType="java.util.Map">
+	SELECT *FROM (
+	SELECT rownum AS rnum, f.*FROM 
+	(SELECT *FROM Mproduct WHERE status = 0 and (pname LIKE '%' || #{keyword,jdbcType=VARCHAR} || '%' )
+	ORDER BY pcode DESC) f) WHERE rnum BETWEEN #{start} AND #{end} 
+	</select>
+	
+	<select id="categorylist" resultType="teamD.project.dto.MproductDto" parameterType="java.util.Map">
+	SELECT * FROM (
+	SELECT rownum AS rnum, f.*FROM 
+	(SELECT *FROM Mproduct WHERE status = 0 and (category = #{category}) ORDER BY pcode DESC) f)
+	WHERE rnum BETWEEN #{start} AND #{end} 
+	</select>
+
+	<select id="searchCount" resultType="int" parameterType="java.util.Map">
+	SELECT COUNT(*) FROM MPRODUCT WHERE status = 0 and pname LIKE '%' || #{keyword,jdbcType=VARCHAR} || '%'
+	 </select>
+
+	<select id="categoryCount" resultType="int" parameterType="java.util.Map">
+	SELECT COUNT(*) FROM MPRODUCT WHERE status= 0 and category = #{category} 
+	</select>
+	
+	<select resultType="int" id="count">
+	SELECT count(*) FROM Mproduct 
+	</select>
+	
+	<select id="list" resultType="teamD.project.dto.MproductDto">
+		select *
+		from Mproduct
+		where status = 0
+	</select>
+	
+	
+ 	<select id="recentlist" resultType="teamD.project.dto.MproductDto">
+		SELECT pname,id,price,createAt,psize,picture,pcode 
+		FROM MPRODUCT 
+		where status=0
+		ORDER BY CREATEAT DESC
+	</select>
+	
+	
+	<select id="mostlist" resultType="teamD.project.dto.MproductDto">
+		SELECT pname,id,price,createAt,psize,picture,pcode
+		FROM MPRODUCT
+		where status=0
+		ORDER BY READCOUNT DESC
+	</select>
+	
+	
+	<select id="pnamelist" resultType="teamD.project.dto.MproductDto" parameterType="String">
+		SELECT pname,id,price,createAt,psize,picutre 
+		FROM MPRODUCT 
+		where status=0
+		WHERE pname = #{pname}
+	</select>
+	
+	
+	<insert id="insert"  parameterType="teamD.project.dto.MproductDto">
+  			insert into MPRODUCT
+  			values (#{pname},mproduct_pcode_seq.nextval,#{id},#{price},#{brand},#{psize},#{category},0,sysdate,#{picture},#{content},null,0,null)
+  		</insert>
+	
+	<update id="readCount" parameterType="int">
+		Update MPRODUCT
+		set 
+			READCOUNT = READCOUNT +1
+		where
+			pcode=#{pcode}
+	</update> 
+	
+	<select id="detail" parameterType="int" resultType="teamD.project.dto.MproductDto">
+	select * from Mproduct
+	where
+	pcode=#{pcode}
+	</select>
+	
+	<select resultType="int" id="buycount" parameterType="String">
+   SELECT count(*) FROM Mproduct where buyid=#{id} 
+   </select>
+   
+   
+   <select resultType="int" id="sellcount" parameterType="String">
+   SELECT count(*) FROM Mproduct where id=#{id}
+   </select>
+   
+   <select parameterType="java.util.Map" resultType="teamD.project.dto.MproductDto" id="myselllist">
+   SELECT * FROM(SELECT rownum r ,f.*FROM (SELECT * FROM Mproduct where id=#{id} ORDER BY createat DESC) f)WHERE r BETWEEN #{start} AND #{end} 
+   </select>
+   
+   
+   <select parameterType="java.util.Map" resultType="teamD.project.dto.MproductDto" id="mybuylist">
+   SELECT * FROM(SELECT rownum r ,f.*FROM (SELECT * FROM Mproduct where buyid=#{id} ORDER BY buyat DESC) f)WHERE r BETWEEN #{start} AND #{end} 
+   </select>
+
+	<update id="update" parameterType="java.util.Map">
+      UPDATE mproduct SET price=#{requestprice},buyid=#{buyid}, buyat = sysdate, status=1 WHERE pcode = #{pcode} 
+   </update>
+   
+   
+   <select id="oneBypcode" resultType="teamD.project.dto.MproductDto" parameterType="int">
+      select * from mproduct where pcode=#{pcode}
+   </select>
+   
+
+</mapper>
+

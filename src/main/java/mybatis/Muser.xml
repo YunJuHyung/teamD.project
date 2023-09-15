@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+ <mapper namespace="Muser">
+ 
+ 	<select id="list" resultType="teamD.project.dto.MuserDto">
+ 		select *
+ 		from 
+ 			Muser
+ 	</select>
+ 	
+ 	<select id="login" parameterType="java.util.Map" resultType="teamD.project.dto.MuserDto">
+ 		select *
+ 		from
+ 			Muser
+ 		where id=#{id} and password=#{password}
+ 	</select>
+ 	
+ 	
+ 	<insert id="insert" parameterType="teamD.project.dto.MuserDto" >
+ 	 <!-- <insert id="insertUser" parameterType="MUser"> -->
+       INSERT INTO muser VALUES (#{id}, #{password}, #{name}, #{nickname}, #{birth}, #{address},#{phone}) 
+    <!-- 회원가입에서 입력받은 값을 받음 -->
+    </insert>
+    
+    <update id="update" parameterType="teamD.project.dto.MuserDto">
+       update muser
+       set
+           name=#{name},nickname=#{nickname},address=#{address}
+        where id=#{id}
+    </update>
+    
+    <select id="one" parameterType="String" resultType="teamD.project.dto.MuserDto">
+       select * from muser where id=#{buyid}
+    </select>
+    
+    <!-- 중복id체크 sql -->
+ 	<select id="checkDuplicateId" parameterType="String" resultType="int">
+        SELECT count(*) FROM MUser WHERE id = #{id}
+	</select>
+    
+    
+ 
+ </mapper>

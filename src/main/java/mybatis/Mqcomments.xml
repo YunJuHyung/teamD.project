@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace= "Mqcomments">
+    <insert id="insert" parameterType="teamD.project.dto.MqcommentDto">
+       INSERT INTO mqcomments
+          (idx,mref,writer,content) 
+      VALUES 
+         (mqcomment_idx_seq.nextval,#{mref},#{writer},#{content})
+    </insert>  
+    
+    <delete id="delete" parameterType="long">
+       DELETE FROM 
+          mqcomments
+       WHERE 
+          idx=#{idx}
+    </delete>
+    
+    <select id="maxOf" resultType="int">
+       SELECT max(idx) FROM mqcomments
+    </select>
+    
+    <select id="commentsList" parameterType="long" resultType="teamD.project.dto.MqcommentDto">
+       SELECT *
+       FROM mqcomments
+       WHERE mref=#{mref}
+    </select>
+    
+    <!-- 메인글의 댓글 갯수 컬럼을 update -->
+    <update id="setqCommentCount" parameterType="long">
+    <!-- 메인글 idx의 댓글이 몇개인지 communityComments 테이블에서 count(*) 로 구하고
+        메인글 테이블 community update 합니다. -->
+       update Mqa
+       set commentcount =(
+          SELECT count(*)
+          FROM mqcomments
+          WHERE mref=#{idx}
+       )
+       where idx = #{idx}
+    </update>
+ </mapper>
+ 
+ 
+ 
+ 
+ 
+ 

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace= "Mbuy">
+ 
+ <select id="requestlist" parameterType="long" resultType="teamD.project.dto.McommentDto">
+       	SELECT *
+		FROM MBUY
+		WHERE id = #{id} AND status = 1
+ </select>
+ 
+ <insert id="buyinsert" parameterType="teamD.project.dto.MbuyDto">
+ 		insert into Mbuy
+ 		values(#{pcode},#{pname},#{id},#{requestprice},#{buyid},#{buyphone},#{buyaddress})
+ </insert>
+ 
+ 
+ <select resultType="teamD.project.dto.MbuyDto" id="onembuy" parameterType="java.util.Map">
+   SELECT*FROM mbuy WHERE pcode=#{pcode} and buyid=#{buyid}
+   </select>
+ 
+ <select resultType="teamD.project.dto.MbuyDto" parameterType="java.util.Map" id="pcodelist">
+ SELECT * FROM(SELECT rownum r ,f.*FROM (SELECT * FROM Mbuy where pcode=#{pcode} order by requestprice desc) f)WHERE r BETWEEN #{start} AND #{end}
+  </select>
+
+<select resultType="int" parameterType="int" id="pcodecount">
+SELECT count(*) FROM Mbuy where pcode=#{pcode} 
+</select>
+ 
+ <delete id="delete" parameterType="int">
+ Delete from Mbuy
+ where pcode=#{pcode}
+ </delete>
+ 
+ <select id="paylist" parameterType="java.util.Map" resultType="int">
+ 		select count(*)
+ 		from mbuy
+ 		where buyid= #{id} and pcode=#{pcode}
+ </select>
+ 
+ 
+ <update id="priceupdate" parameterType="int">
+ 	update mbuy set requestprice=#{requestprice} where pcode=#{pcode}
+ </update>
+ 
+ <select id="requestcount" parameterType="String" resultType="int">
+ 		SELECT
+  CASE
+    WHEN COUNT(*) > 0 THEN COUNT(*)
+    ELSE 0
+  END AS result
+FROM
+  mbuy
+WHERE
+  id = #{id}
+ </select>
+ 
+ </mapper>

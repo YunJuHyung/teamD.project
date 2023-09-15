@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="Mqa">
+ 	
+ 	<select id="list1" resultType="teamD.project.dto.MqaDto">
+ 		SELECT * 
+ 		FROM mqa
+ 	</select>
+ 	
+ 	<!-- 페이지네이션(페이지 설정) 을 위한 select -->
+ 	<select id="pagelist1" resultType="teamD.project.dto.MqaDto" parameterType="java.util.Map">
+ 		SELECT * FROM 
+			(SELECT rownum r ,f.* FROM
+								(SELECT * FROM mqa ORDER BY idx DESC) f)
+		WHERE r BETWEEN #{start} AND #{end}
+ 	</select>
+ 	
+ 	
+ 	<select id="qcount" resultType="int">
+ 		SELECT count(*) FROM mqa
+ 	</select>
+ 	
+ 	
+ 	<!-- PK로 글 조회(글 읽기) -->
+ 	<select id="qselectByIdx" parameterType="long" resultType="teamD.project.dto.MqaDto">
+ 		SELECT * 
+ 		FROM 
+ 			mqa 
+ 		WHERE 
+ 			idx=#{idx}   
+ 	</select>
+ 	
+ 	 <!--  글 조회수 증가 -->
+ 	<update id="qsetReadCount" parameterType="long">
+ 		UPDATE mqa
+		SET 
+			READCOUNT = READCOUNT +1 
+		WHERE 
+			idx = #{idx}
+ 	</update>
+ 	
+ 	<update id="qupdate" parameterType="teamD.project.dto.MqaDto">
+	 	UPDATE mqa
+		SET 
+			title=#{title}, content=#{content}
+		WHERE 
+			idx=#{idx}
+ 	</update>
+ 	
+ 	<delete id="qdelete" parameterType="long">
+ 		DELETE FROM 
+ 			mqa 
+ 		WHERE 
+ 			idx=#{idx}
+ 	</delete>
+ 	
+ 	<insert id="qinsert" parameterType="teamD.project.dto.MqaDto" >
+ 		INSERT INTO
+ 		 mqa (idx,writer,title,content)
+			VALUES (mqa_idx_seq.nextval,#{writer},#{title},#{content})
+			<!-- 매개변수가 null을 허용하고 싶을 때 jdbcType = VARCHAR 로 타입을 알려준다 -->
+			<!-- insert 후에 communnity_idx_seq 시퀀스 값을 가져와서 idx 프로퍼티에 저장하는 태그  -->
+	<selectKey keyProperty="idx" resultType="long" order="AFTER">
+	<!-- communnity_idx_seq 시퀀스 값 가져오는 sql -->
+		select mqa_idx_seq.currval
+		from dual 
+	</selectKey>
+		
+ 	</insert>
+ 	
+ 	<select id="qsearchCount" resultType="int" parameterType="java.util.Map">
+    SELECT COUNT(*)
+    FROM mqa
+    WHERE
+        <choose>
+            <when test="whichSearch == 'title'">
+                title LIKE '%' || #{keyword} || '%'
+            </when>
+            <when test="whichSearch == 'writer'">
+                writer LIKE '%' || #{keyword} || '%'
+            </when>
+            <otherwise>
+                1=1
+            </otherwise>
+        </choose>
+</select>
+
+<select id="qsearchPagelist" resultType="teamD.project.dto.MqaDto" parameterType="java.util.Map">
+    SELECT *
+    FROM (
+        SELECT rownum AS rnum, m.*
+        FROM (
+            SELECT *
+            FROM mqa
+            WHERE
+                (title LIKE '%' || #{keyword} || '%' AND #{whichSearch} = 'title')
+            OR (writer LIKE '%' || #{keyword} || '%' AND #{whichSearch} = 'writer')
+            ORDER BY idx DESC
+        ) m
+    )
+    WHERE rnum BETWEEN #{start} AND #{end}
+</select>
+ 
+ 	
+ 	
+ </mapper>
+ 
+ 
+ 
+ 
+ 
+ 

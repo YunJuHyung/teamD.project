@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="message">
+ 
+ <insert id="sendNote" parameterType="teamD.project.dto.MessageDto">
+        INSERT INTO message (m_idx, sendid, reciveid, message)
+        VALUES (message_idx_seq.nextval, #{sendid}, #{reciveid}, #{message})
+        
+        <selectKey keyProperty="m_idx" resultType="long" order="AFTER">
+	<!-- communnity_idx_seq 시퀀스 값 가져오는 sql -->
+		select message_idx_seq.currval
+		from dual 
+	</selectKey>
+    </insert>
+
+    <!-- 특정 수신자의 쪽지 조회 -->
+    <select id="getMessagesByRecipient" resultType="teamD.project.dto.MessageDto">
+        SELECT * FROM message
+        WHERE reciveid = #{reciveid}
+    </select>
+    <select id="getMessageBymidx" resultType="teamD.project.dto.MessageDto">
+        SELECT * FROM message
+        WHERE m_idx = #{m_idx}
+    </select>
+    <update id="statusupdate" parameterType="long">
+    	update message set status = 1 where m_idx=#{m_idx}
+    </update>
+ 	
+ </mapper>

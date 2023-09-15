@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="mcommunity">
+ 	
+ 	<!-- 메인글 목록 가져오기 - 할일 : 한번에(즉 한페이지에) 글 10개씩 가져오도록 변경해야 합니다.   -->
+ 	<select id="list" resultType="teamD.project.dto.McommunityDto">
+ 		SELECT * 
+ 		FROM mcommunity
+ 	</select>
+ 	
+ 	<!-- 페이지네이션(페이지 설정) 을 위한 select -->
+ 	<select id="pagelist" resultType="teamD.project.dto.McommunityDto" parameterType="java.util.Map">
+ 		SELECT * FROM 
+			(SELECT rownum r ,f.* FROM
+								(SELECT * FROM mcommunity  ORDER BY idx DESC) f)
+		WHERE r BETWEEN #{start} AND #{end}
+ 	</select>
+ 	
+ 	
+ 	<select id="count" resultType="int">
+ 		SELECT count(*) FROM mcommunity
+ 	</select>
+ 	
+ 	
+ 	<!-- PK로 글 조회(글 읽기) -->
+ 	<select id="selectByIdx" parameterType="long" resultType="teamD.project.dto.McommunityDto">
+ 		SELECT * 
+ 		FROM 
+ 			mcommunity 
+ 		WHERE 
+ 			idx=#{idx}   
+ 	</select>
+ 	
+ 	 <!--  글 조회수 증가 -->
+ 	<update id="setReadCount" parameterType="long">
+ 		UPDATE mcommunity 
+		SET 
+			READCOUNT = READCOUNT +1 
+		WHERE 
+			idx = #{idx}
+ 	</update>
+ 	
+ 	<update id="update" parameterType="teamD.project.dto.McommunityDto">
+	 	UPDATE mcommunity
+		SET 
+			title=#{title}, content=#{content}
+		WHERE 
+			idx=#{idx}
+ 	</update>
+ 	
+ 	<delete id="delete" parameterType="long">
+ 		DELETE FROM 
+ 			mcommunity 
+ 		WHERE 
+ 			idx=#{idx}
+ 	</delete>
+ 	
+ 	<insert id="insert" parameterType="teamD.project.dto.McommunityDto" >
+ 		INSERT INTO
+ 		 mcommunity (idx,writer,title,content)
+			VALUES (mcommunity_idx_seq.nextval,#{writer},#{title},#{content})
+			<!-- 매개변수가 null을 허용하고 싶을 때 jdbcType = VARCHAR 로 타입을 알려준다 -->
+			<!-- insert 후에 communnity_idx_seq 시퀀스 값을 가져와서 idx 프로퍼티에 저장하는 태그  -->
+	<selectKey keyProperty="idx" resultType="long" order="AFTER">
+	<!-- communnity_idx_seq 시퀀스 값 가져오는 sql -->
+		select mcommunity_idx_seq.currval
+		from dual 
+	</selectKey>
+		
+ 	</insert>
+ 	
+ 	
+<select id="searchCount" resultType="int" parameterType="java.util.Map">
+    SELECT COUNT(*)
+    FROM mcommunity
+    WHERE
+        <choose>
+            <when test="whichSearch == 'title'">
+                title LIKE '%' || #{keyword} || '%'
+            </when>
+            <when test="whichSearch == 'writer'">
+                writer LIKE '%' || #{keyword} || '%'
+            </when>
+            <otherwise>
+                1=1
+            </otherwise>
+        </choose>
+</select>
+
+<select id="searchPagelist" resultType="teamD.project.dto.McommunityDto" parameterType="java.util.Map">
+    SELECT *
+    FROM (
+        SELECT rownum AS rnum, m.*
+        FROM (
+            SELECT *
+            FROM mcommunity
+            WHERE
+                (title LIKE '%' || #{keyword} || '%' AND #{whichSearch} = 'title')
+            OR (writer LIKE '%' || #{keyword} || '%' AND #{whichSearch} = 'writer')
+            ORDER BY idx DESC
+        ) m
+    )
+    WHERE rnum BETWEEN #{start} AND #{end}
+</select>
+
+
+ </mapper>
+ 
+ 
+ 
+ 
+ 
+ 
